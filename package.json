@@ -12,10 +12,34 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "keybindings": [
+      {
+        "command": "cycle-clipboard-ring.copy",
+        "key": "ctrl+c",
+        "mac": "cmd+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "cycle-clipboard-ring.paste",
+        "key": "ctrl+v",
+        "mac": "cmd+v",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "cycle-clipboard-ring.cyclePaste",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorTextFocus"
+      }
+    ],
     "commands": [
       {
-        "command": "cycle-clipboard-ring.helloWorld",
-        "title": "Hello World"
+        "command": "cycle-clipboard-ring.copy",
+        "title": "Cycle clipboard ring - Copy"
+      },
+      {
+        "command": "cycle-clipboard-ring.paste",
+        "title": "Cycle clipboard ring - Paste"
       }
     ]
   },

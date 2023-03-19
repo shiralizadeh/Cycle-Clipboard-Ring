@@ -1,6 +1,6 @@
-# cycle-clipboard-ring README
+# Cycle Clipboard Ring README
 
-This is the README for your extension "cycle-clipboard-ring". After writing up a brief description, we recommend including the following sections.
+Make your clipboard more useful by have a ring of cliboard history.
 
 ## Features
 

@@ -1,25 +1,64 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
+import { TextEditorEdit } from "vscode";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+const KEY = "cycle-clipboard-ring";
+
 export function activate(context: vscode.ExtensionContext) {
+  const copyDisposable = vscode.commands.registerCommand(`${KEY}.copy`, (e) => {
+    const activeEditor = vscode.window.activeTextEditor;
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "cycle-clipboard-ring" is now active!');
+    if (activeEditor) {
+      const text = activeEditor.document.getText(activeEditor.selection);
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('cycle-clipboard-ring.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Cycle Clipboard Ring!');
-	});
+      vscode.env.clipboard.writeText(text);
+    }
+  });
 
-	context.subscriptions.push(disposable);
+  const pasteDisposable = vscode.commands.registerCommand(
+    `${KEY}.paste`,
+    async (e) => {
+      const activeEditor = vscode.window.activeTextEditor;
+
+      if (activeEditor) {
+        let text = await vscode.env.clipboard.readText();
+
+        activeEditor.edit(function (editBuilder: TextEditorEdit) {
+          editBuilder.replace(activeEditor.selection, text); // Replace currently selected
+          activeEditor.selection = new vscode.Selection(
+            activeEditor.selection.end,
+            activeEditor.selection.end
+          ); // Move cursor to end of pasted text
+        });
+      }
+    }
+  );
+
+  const cyclePasteDisposable = vscode.commands.registerCommand(
+    `${KEY}.cyclePaste`,
+    async (e) => {
+      const activeEditor = vscode.window.activeTextEditor;
+
+      if (activeEditor) {
+        let text = "CYCLE_PASTE";
+
+        activeEditor
+          .edit(function (editBuilder: TextEditorEdit) {
+            editBuilder.delete(activeEditor.selection); // Delete anything currently selected
+          })
+          .then(function () {
+            activeEditor.edit(function (editBuilder: TextEditorEdit) {
+              editBuilder.insert(activeEditor.selection.start, text); // Insert the text
+            });
+          });
+      }
+    }
+  );
+
+  context.subscriptions.push(
+    copyDisposable,
+    pasteDisposable,
+    cyclePasteDisposable
+  );
 }
 
 // This method is called when your extension is deactivated
