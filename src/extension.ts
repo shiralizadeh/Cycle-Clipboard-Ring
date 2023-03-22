@@ -4,6 +4,30 @@ import { TextEditorEdit } from "vscode";
 const KEY = "cycle-clipboard-ring";
 
 export function activate(context: vscode.ExtensionContext) {
+  const clipboardRing: string[] = [];
+  let clipboardRingIndex: number = -1;
+
+  const addToClipboardRing = (text: string) => {
+    if (clipboardRing[clipboardRing.length - 1] !== text) {
+      clipboardRing.push(text);
+      clipboardRingIndex = clipboardRing.length;
+    }
+  };
+
+  const nextClipboardRing = () => {
+    if (!clipboardRing.length) return;
+
+    clipboardRingIndex--;
+
+    if (clipboardRingIndex === -1) {
+      clipboardRingIndex = clipboardRing.length - 1;
+    }
+
+    const text = clipboardRing[clipboardRingIndex];
+
+    return text;
+  };
+
   const copyDisposable = vscode.commands.registerCommand(`${KEY}.copy`, (e) => {
     const activeEditor = vscode.window.activeTextEditor;
 
@@ -11,6 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
       const text = activeEditor.document.getText(activeEditor.selection);
 
       vscode.env.clipboard.writeText(text);
+      addToClipboardRing(text);
     }
   });
 
@@ -39,17 +64,27 @@ export function activate(context: vscode.ExtensionContext) {
       const activeEditor = vscode.window.activeTextEditor;
 
       if (activeEditor) {
-        let text = "CYCLE_PASTE";
+        const text = nextClipboardRing() || "EMPTY";
 
-        activeEditor
-          .edit(function (editBuilder: TextEditorEdit) {
-            editBuilder.delete(activeEditor.selection); // Delete anything currently selected
-          })
-          .then(function () {
-            activeEditor.edit(function (editBuilder: TextEditorEdit) {
-              editBuilder.insert(activeEditor.selection.start, text); // Insert the text
-            });
-          });
+        activeEditor.edit(function (editBuilder: TextEditorEdit) {
+          editBuilder.replace(activeEditor.selection, text); // Replace currently selected
+
+          const textLength = text.length - 1;
+
+          const start = new vscode.Position(
+            activeEditor.selection.start.line,
+            activeEditor.selection.start.character
+          );
+
+          const end = new vscode.Position(
+            activeEditor.selection.start.line,
+            activeEditor.selection.start.character + textLength
+          );
+
+          console.log(start, end);
+
+          activeEditor.selection = new vscode.Selection(start, end); // Select the pasted text for next cycle
+        });
       }
     }
   );
