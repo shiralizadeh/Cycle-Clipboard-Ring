@@ -14,8 +14,10 @@ export function activate(context: vscode.ExtensionContext) {
     }
   };
 
-  const nextClipboardRing = () => {
-    if (!clipboardRing.length) return;
+  const nextClipboardRing = async () => {
+    if (!clipboardRing.length) {
+      return await vscode.env.clipboard.readText();
+    }
 
     clipboardRingIndex--;
 
@@ -23,9 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
       clipboardRingIndex = clipboardRing.length - 1;
     }
 
-    const text = clipboardRing[clipboardRingIndex];
-
-    return text;
+    return clipboardRing[clipboardRingIndex];
   };
 
   const copyDisposable = vscode.commands.registerCommand(`${KEY}.copy`, (e) => {
@@ -64,26 +64,10 @@ export function activate(context: vscode.ExtensionContext) {
       const activeEditor = vscode.window.activeTextEditor;
 
       if (activeEditor) {
-        const text = nextClipboardRing() || "EMPTY";
+        const text = await nextClipboardRing();
 
         activeEditor.edit(function (editBuilder: TextEditorEdit) {
           editBuilder.replace(activeEditor.selection, text); // Replace currently selected
-
-          const textLength = text.length - 1;
-
-          const start = new vscode.Position(
-            activeEditor.selection.start.line,
-            activeEditor.selection.start.character
-          );
-
-          const end = new vscode.Position(
-            activeEditor.selection.start.line,
-            activeEditor.selection.start.character + textLength
-          );
-
-          console.log(start, end);
-
-          activeEditor.selection = new vscode.Selection(start, end); // Select the pasted text for next cycle
         });
       }
     }
