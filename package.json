@@ -1,7 +1,9 @@
 {
   "name": "cycle-clipboard-ring",
   "displayName": "Cycle Clipboard Ring",
-  "description": "Cycle through your clipboard",
+  "description": "Take your Clipboard History to the next level by have a ring previous clipboard items.",
+  "publisher": "Shiralizadeh",
+  "icon": "https://raw.githubusercontent.com/shiralizadeh/Cycle-Clipboard-Ring/main/assets/icon.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.76.0"
