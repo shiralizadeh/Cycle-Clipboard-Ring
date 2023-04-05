@@ -38,10 +38,6 @@ _No settings at the moment_
 
 ---
 
-## Following extension guidelines
-
-- [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
 ## Contributors
 
 - [Mohamad Shiralizadeh](https://github.com/shiralizadeh)
