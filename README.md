@@ -5,7 +5,7 @@ Take your Clipboard History to the next level by have a ring previous clipboard 
 ## Features
 
 - Keep track of clipboard history
-- Cycle through items usign keyboard
+- Cycle through items using keyboard
 
 ## Keyboard Shortcuts
 
@@ -26,6 +26,10 @@ Take your Clipboard History to the next level by have a ring previous clipboard 
 _No settings at the moment_
 
 ## Release Notes
+
+### 0.0.2
+
+- Fix copy issue with Single lines
 
 ### 0.0.1
 
