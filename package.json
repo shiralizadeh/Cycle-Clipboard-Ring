@@ -1,7 +1,7 @@
 {
   "name": "cycle-clipboard-ring",
   "displayName": "Cycle Clipboard Ring",
-  "description": "Take your Clipboard History to the next level by have a ring previous clipboard items.",
+  "description": "Take your Clipboard History to the next level by have a ring of previous clipboard items.",
   "publisher": "shiralizadeh",
   "icon": "assets/logo.png",
   "version": "0.0.2",

@@ -1,6 +1,6 @@
 # VSCode Cycle Clipboard Ring extention
 
-Take your Clipboard History to the next level by have a ring previous clipboard items.
+Take your Clipboard History to the next level by have a ring of previous clipboard items.
 
 ## Features
 
