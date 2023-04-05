@@ -4,7 +4,7 @@
   "description": "Take your Clipboard History to the next level by have a ring previous clipboard items.",
   "publisher": "shiralizadeh",
   "icon": "assets/logo.png",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.76.0"
   },
