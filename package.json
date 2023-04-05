@@ -22,12 +22,6 @@
         "when": "editorTextFocus"
       },
       {
-        "command": "cycle-clipboard-ring.paste",
-        "key": "ctrl+v",
-        "mac": "cmd+v",
-        "when": "editorTextFocus"
-      },
-      {
         "command": "cycle-clipboard-ring.cyclePaste",
         "key": "ctrl+shift+v",
         "mac": "cmd+shift+v",

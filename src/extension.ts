@@ -8,6 +8,8 @@ const MAX_HISTORY_SIZE = 10;
 type ClipboardItem = {
   text: string;
   isSingleLine: boolean;
+  isEmpty: boolean;
+  isSingleLineCopy: boolean;
   length: number;
   lines: number;
 };
@@ -25,6 +27,8 @@ export function activate(context: vscode.ExtensionContext) {
       clipboardRingItems.push({
         text,
         isSingleLine: selection.isSingleLine,
+        isEmpty: selection.isEmpty,
+        isSingleLineCopy: selection.isSingleLine && selection.isEmpty,
         length: selection.isSingleLine
           ? Math.abs(selection.end.character - selection.start.character)
           : selection.end.character,
@@ -50,32 +54,17 @@ export function activate(context: vscode.ExtensionContext) {
     return clipboardRingItems[clipboardRingIndex];
   };
 
-  const copyDisposable = vscode.commands.registerCommand(`${KEY}.copy`, (e) => {
-    const activeEditor = vscode.window.activeTextEditor;
-
-    if (activeEditor) {
-      const text = activeEditor.document.getText(activeEditor.selection);
-
-      vscode.env.clipboard.writeText(text);
-      addToClipboardRing(text, activeEditor.selection);
-    }
-  });
-
-  const pasteDisposable = vscode.commands.registerCommand(
-    `${KEY}.paste`,
+  const copyDisposable = vscode.commands.registerCommand(
+    `${KEY}.copy`,
     async (e) => {
       const activeEditor = vscode.window.activeTextEditor;
 
       if (activeEditor) {
+        vscode.commands.executeCommand("execCopy");
+
         let text = await vscode.env.clipboard.readText();
 
-        activeEditor.edit(function (editBuilder: TextEditorEdit) {
-          editBuilder.replace(activeEditor.selection, text); // Replace currently selected
-          activeEditor.selection = new vscode.Selection(
-            activeEditor.selection.end,
-            activeEditor.selection.end
-          ); // Move cursor to end of pasted text
-        });
+        addToClipboardRing(text, activeEditor.selection);
       }
     }
   );
@@ -95,19 +84,29 @@ export function activate(context: vscode.ExtensionContext) {
 
         activeEditor
           .edit(function (editBuilder: TextEditorEdit) {
-            selection = new vscode.Selection(
-              new vscode.Position(
-                activeEditor.selection.start.line,
-                activeEditor.selection.start.character
-              ),
-              new vscode.Position(
-                activeEditor.selection.start.line + clipboardItem.lines,
-                clipboardItem.isSingleLine
-                  ? activeEditor.selection.start.character +
-                    clipboardItem.length
-                  : clipboardItem.length
-              )
-            );
+            let endCharacter = 0,
+              endLine = 0;
+
+            if (activeEditor.selection.isEmpty) {
+              if (clipboardItem.isSingleLine) {
+                endLine = activeEditor.selection.start.line;
+                endCharacter =
+                  activeEditor.selection.start.character + clipboardItem.length;
+              } else if (clipboardItem.isSingleLineCopy) {
+                endLine = activeEditor.selection.start.line + 1;
+                endCharacter = clipboardItem.length;
+              } else {
+                endCharacter = clipboardItem.length;
+              }
+
+              selection = new vscode.Selection(
+                new vscode.Position(
+                  activeEditor.selection.start.line,
+                  activeEditor.selection.start.character
+                ),
+                new vscode.Position(endLine, endCharacter)
+              );
+            }
 
             editBuilder.replace(activeEditor.selection, clipboardItem.text); // Replace currently selected
           })
@@ -122,11 +121,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(
-    copyDisposable,
-    pasteDisposable,
-    cyclePasteDisposable
-  );
+  context.subscriptions.push(copyDisposable, cyclePasteDisposable);
 }
 
 // This method is called when your extension is deactivated
