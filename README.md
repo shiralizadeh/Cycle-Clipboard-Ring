@@ -41,5 +41,12 @@ _No settings at the moment_
 ## Contributors
 
 - [Mohamad Shiralizadeh](https://github.com/shiralizadeh)
+## **Contributors**
+
+This project exists thanks to our contributors.
+
+<a href="https://github.com/shiralizadeh/Cycle-Clipboard-Ring/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=shiralizadeh/Cycle-Clipboard-Ring" />
+</a>
 
 **Enjoy!**
